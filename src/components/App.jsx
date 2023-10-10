@@ -1,103 +1,95 @@
-import { Component } from "react";
+import { useState, useEffect } from "react";
 
 import style from "./App.module.css"
 
 import { fetchImages } from "helpers/api";
 import { Loader } from "./Loader/Loader";
 import { Searchbar } from "./Searchbar/Searchbar";
-import ImageGallery from "./ImageGallery/ImageGallery";
+import {ImageGallery} from "./ImageGallery/ImageGallery";
 import { Button } from "./Button/Button";
 
 
 
-export class App extends Component {
-  state = {
-    images: null,
-    isLoading: false,
-    error: null,
-    searchQuery: '',
-    isButtonShown: false, 
-    page: 1,
-    totalPages: 0,
-  }
+export const App = () => {
+ 
+  const [images, setImages] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [prevSearchQuery, setPrevSearchQuery] = useState('');
+  const [isButtonShown, setIsButtonShown] = useState(true);
+  const [perPage, setPerPage] = useState(12);
+  const [prevPerPage, setPrevPerPage] = useState('');
+  const [totalHits, setTotalHits] = useState(0);
 
-  fetchAllImages = async () => {
+  const fetchAllImages = async () => {
     try {
-      const { page, searchQuery } = this.state;
-      this.setState({ isLoading: true });
-      const images = await fetchImages(page, searchQuery);
-      
-      this.setState({ images: images.hits, totalPages: Math.ceil(images.totalHits / 12), });
-      
+      setIsLoading(true);
 
-      if (images.hits.length > 0) {
-        this.setState({
-          
-          isButtonShown: true,
-          });
-        
-      } 
+      const imagesGallery = await fetchImages(perPage, searchQuery);
+      setImages(imagesGallery.hits);
+      setTotalHits(imagesGallery.totalHits)
+      
+     if(perPage.length >= totalHits.length) {
+      setIsButtonShown(false)
+     }
 
-      if (images.hits.length < 0) {
-        this.setState({
-          
-          isButtonShown: false,
-          });
-      }
+     if (perPage.length < totalHits.length) {
+      setIsButtonShown(true)
+     }
       
     } catch (error) {
-      this.setState({ error: error.message })
+      setError(error.message);
     } finally {
-      this.setState({ isLoading: false })
+      setIsLoading(false);
     }
   }
 
-  componentDidMount() {
-    this.fetchAllImages();
-  }
-
-  componentDidUpdate(_, prevState) {
-    
-    if (
-      prevState.searchQuery!== this.state.searchQuery ||
-      prevState.page !== this.state.page
-    ) {
-      this.fetchAllImages(); 
+  useEffect(() => {
+    fetchAllImages();
+  }, [])
+ 
+  useEffect(() => {
+     if (searchQuery !== prevSearchQuery || perPage !== prevPerPage) {
+      fetchAllImages();
     }
+    setPrevSearchQuery(searchQuery);
+    setPrevPerPage(perPage);
+  }, [searchQuery,perPage])
+
+
+
+  const onLoadMore = () => {
+    setPerPage(prevPerPage => prevPerPage + 12)
   }
 
-  onLoadMore = () => {
-    this.setState(prevState => {
-      return {page: prevState.page + 1}
-    })
-  }
-
-  onHandleSubmit = event => {
+  const onHandleSubmit = event => {
   event.preventDefault();
-    const query = event.currentTarget.elements.searchQuery.value;
-    this.setState({ searchQuery: query, images: null, page: 1 })
-    
+    const query = event.currentTarget.elements.searchQueryValue.value;
+    setSearchQuery(query);
+    setImages(null);
+    setPerPage(12)
     event.currentTarget.reset();
   }
 
-  render() {
+  
     const showImages =
-      Array.isArray(this.state.images) && this.state.images.length;
+      Array.isArray(images) && images.length;
     
     return (
       <div className={style['App']}>
         
-        <Searchbar handleSubmit={this.onHandleSubmit} />
-        {this.state.isLoading && <Loader />}
-        {this.state.error && <p className={style["error"]}>{this.state.error}</p>}
-        {showImages && <ImageGallery images={this.state.images} />}
+        <Searchbar handleSubmit={onHandleSubmit} />
+        {isLoading && <Loader />}
+        {error && <p className={style["error"]}>{error}</p>}
+        {showImages && <ImageGallery images={images} />}
         
-        {this.state.isButtonShown && <Button loadMore={this.onLoadMore} />} 
+        {isButtonShown && (<Button loadMore={onLoadMore} />)} 
         
         
         
     </div>
       )
-    }
+    
   
 }

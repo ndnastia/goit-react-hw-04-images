@@ -10,7 +10,7 @@ export const Searchbar = ({handleSubmit}) => {
 
     <input
             className={style["SearchForm-input"]}
-            name="searchQuery"
+            name="searchQueryValue"
       type="text"
       autoComplete="off"
       autoFocus
