@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect} from "react";
 
 import style from "./App.module.css"
 
@@ -45,17 +45,7 @@ export const App = () => {
     }
   }
 
-  useEffect(() => {
-    fetchAllImages();
-  }, [])
- 
-  useEffect(() => {
-     if (searchQuery !== prevSearchQuery || perPage !== prevPerPage) {
-      fetchAllImages();
-    }
-    setPrevSearchQuery(searchQuery);
-    setPrevPerPage(perPage);
-  }, [searchQuery,perPage, prevSearchQuery, prevPerPage, fetchAllImages])
+  
 
 
 
@@ -71,6 +61,18 @@ export const App = () => {
     setPerPage(12)
     event.currentTarget.reset();
   }
+
+  useEffect(() => {
+    fetchAllImages();
+  }, []);
+ 
+  useEffect(() => {
+     if (searchQuery !== prevSearchQuery || perPage !== prevPerPage) {
+      fetchAllImages();
+    }
+    setPrevSearchQuery(searchQuery);
+    setPrevPerPage(perPage);
+  }, [searchQuery,perPage, prevSearchQuery, prevPerPage, fetchAllImages])
 
   
     const showImages =
