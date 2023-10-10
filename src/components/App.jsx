@@ -55,7 +55,7 @@ export const App = () => {
     }
     setPrevSearchQuery(searchQuery);
     setPrevPerPage(perPage);
-  }, [searchQuery,perPage])
+  }, [searchQuery,perPage, prevSearchQuery, prevPerPage, fetchAllImages])
 
 
 
