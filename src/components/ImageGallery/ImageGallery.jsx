@@ -12,11 +12,7 @@ export const ImageGallery = ({images}) => {
     const [data, setData] = useState(null);
   
     
-  const onKeyDown = event => {
-      if (event.code === 'Escape') {
-      onCloseModal();
-      }
-    };
+  
 
   const onOverlayClick = event => {
     if (event.currentTarget === event.target) {
@@ -36,7 +32,12 @@ export const ImageGallery = ({images}) => {
       setData(null);
     }
 
-    useEffect(() => {
+      useEffect(() => {
+      const onKeyDown = event => {
+      if (event.code === 'Escape') {
+      onCloseModal();
+      }
+    };
     window.addEventListener('keydown', onKeyDown);
 
     return () => {

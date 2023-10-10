@@ -22,7 +22,28 @@ export const App = () => {
   const [prevPerPage, setPrevPerPage] = useState('');
   const [totalHits, setTotalHits] = useState(0);
 
-  const fetchAllImages = async () => {
+  
+
+  
+  const onLoadMore = () => {
+    setPerPage(prevPerPage => prevPerPage + 12)
+  }
+
+  const onHandleSubmit = event => {
+  event.preventDefault();
+    const query = event.currentTarget.elements.searchQueryValue.value;
+    setSearchQuery(query);
+    setImages(null);
+    setPerPage(12)
+    event.currentTarget.reset();
+  }
+
+  // useEffect(() => {
+    
+  // },[]);
+ 
+  useEffect(() => {
+     const fetchAllImages = async () => {
     try {
       setIsLoading(true);
 
@@ -44,37 +65,12 @@ export const App = () => {
       setIsLoading(false);
     }
   }
-
-  
-
-
-
-  const onLoadMore = () => {
-    setPerPage(prevPerPage => prevPerPage + 12)
-  }
-
-  const onHandleSubmit = event => {
-  event.preventDefault();
-    const query = event.currentTarget.elements.searchQueryValue.value;
-    setSearchQuery(query);
-    setImages(null);
-    setPerPage(12)
-    event.currentTarget.reset();
-  }
-
-  useEffect(() => {
-    fetchAllImages();
-  });
- 
-  useEffect(() => {
-    if (!searchQuery || !perPage) return;
-
      if (searchQuery !== prevSearchQuery || perPage !== prevPerPage) {
-      fetchAllImages();
+       fetchAllImages();
     }
     setPrevSearchQuery(searchQuery);
     setPrevPerPage(perPage);
-  }, [searchQuery,perPage, prevSearchQuery, prevPerPage])
+  }, [searchQuery,perPage, prevSearchQuery, prevPerPage, totalHits])
 
   
     const showImages =
