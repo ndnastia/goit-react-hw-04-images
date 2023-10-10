@@ -64,15 +64,17 @@ export const App = () => {
 
   useEffect(() => {
     fetchAllImages();
-  }, []);
+  });
  
   useEffect(() => {
+    if (!searchQuery || !perPage) return;
+
      if (searchQuery !== prevSearchQuery || perPage !== prevPerPage) {
       fetchAllImages();
     }
     setPrevSearchQuery(searchQuery);
     setPrevPerPage(perPage);
-  }, [searchQuery,perPage, prevSearchQuery, prevPerPage, fetchAllImages])
+  }, [searchQuery,perPage, prevSearchQuery, prevPerPage])
 
   
     const showImages =

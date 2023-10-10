@@ -42,7 +42,7 @@ export const ImageGallery = ({images}) => {
     return () => {
       window.removeEventListener('keydown', onKeyDown);
     }
-  }, []);
+  });
         
         return (
             <div>
